@@ -1,0 +1,1061 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riddle Poetry Scrapbook</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Zen+Dots&family=Audiowide&display=swap');
+
+    .scrapbook-container {
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+      font-family: 'Space Mono', monospace;
+      perspective: 2000px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .book-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      height: 600px;
+    }
+
+    .cover-page {
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1430 25%, #2d1b4e 50%, #1a1430 75%, #0a0e27 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover-page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(0, 168, 255, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(138, 43, 226, 0.2) 0%, transparent 50%);
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.8; }
+    }
+
+    .cover-title {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding-top: 80px;
+    }
+
+    .cover-decoration {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+
+    .lotus-symbol {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.15;
+      width: 300px;
+      height: 300px;
+    }
+
+    .energy-particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #00ffff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #00ffff;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-500px) translateX(50px);
+        opacity: 0;
+      }
+    }
+
+    .cover-button {
+      position: relative;
+      z-index: 2;
+      margin-top: 60px;
+      padding: 18px 36px;
+      background: linear-gradient(135deg, #00a8ff 0%, #8a2be2 100%);
+      color: white;
+      border: 2px solid rgba(0, 200, 255, 0.5);
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'Audiowide', cursive;
+      font-weight: bold;
+      font-size: 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(0, 200, 255, 0.4);
+      animation: glow 2s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 8px 24px rgba(0, 200, 255, 0.4);
+      }
+      50% {
+        box-shadow: 0 8px 32px rgba(138, 43, 226, 0.6);
+      }
+    }
+
+    .cover-button:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 12px 36px rgba(0, 200, 255, 0.6);
+    }
+
+    .page {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a2332 0%, #2a3447 100%);
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0, 200, 255, 0.3);
+      padding: 40px;
+      overflow-y: auto;
+      transform-style: preserve-3d;
+      transition: transform 1s ease-in-out;
+      backface-visibility: hidden;
+    }
+
+    .page.flipping-forward {
+      animation: flipForward 1s ease-in-out forwards;
+    }
+
+    .page.flipping-back {
+      animation: flipBack 1s ease-in-out forwards;
+    }
+
+    .page.hidden-left {
+      transform: rotateY(-180deg);
+      pointer-events: none;
+    }
+
+    .page.hidden-right {
+      transform: rotateY(180deg);
+      pointer-events: none;
+    }
+
+    @keyframes flipForward {
+      0% {
+        transform: rotateY(0deg);
+        z-index: 10;
+      }
+      100% {
+        transform: rotateY(-180deg);
+        z-index: 1;
+      }
+    }
+
+    @keyframes flipBack {
+      0% {
+        transform: rotateY(-180deg);
+        z-index: 10;
+      }
+      100% {
+        transform: rotateY(0deg);
+        z-index: 10;
+      }
+    }
+
+    .title-font {
+      font-family: 'Audiowide', cursive;
+    }
+
+    .riddle-card {
+      position: relative;
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(42, 52, 71, 0.8);
+      border: 1px solid rgba(0, 200, 255, 0.3);
+      border-radius: 12px;
+      box-shadow: 3px 3px 12px rgba(0, 200, 255, 0.2);
+      transform: rotate(-0.5deg);
+    }
+
+    .riddle-card:nth-child(even) {
+      transform: rotate(0.5deg);
+    }
+
+    .mystery-box {
+      background: linear-gradient(135deg, #00a8ff 0%, #0080cc 50%, #005999 100%);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      color: white;
+      font-size: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(0, 200, 255, 0.5);
+    }
+
+    .mystery-box:hover {
+      background: linear-gradient(135deg, #00c8ff 0%, #00a0ee 50%, #0078cc 100%);
+      transform: scale(1.02);
+      box-shadow: 0 0 20px rgba(0, 200, 255, 0.5);
+    }
+
+    .riddle-text {
+      font-size: 14px;
+      color: #e0f2fe;
+      padding: 12px;
+      background: rgba(26, 35, 50, 0.9);
+      border-left: 4px solid #00a8ff;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .answer-section {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .answer-section input {
+      flex: 1;
+      min-width: 150px;
+      padding: 8px 12px;
+      border: 2px solid #00a8ff;
+      border-radius: 8px;
+      background: rgba(26, 35, 50, 0.9);
+      color: #e0f2fe;
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+    }
+
+    .answer-section button {
+      padding: 8px 16px;
+      background: #00a8ff;
+      color: white;
+      border: 2px solid rgba(0, 200, 255, 0.5);
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Space Mono', monospace;
+      font-weight: bold;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .answer-section button:hover {
+      background: #00c8ff;
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px rgba(0, 200, 255, 0.6);
+    }
+
+    .feedback-message {
+      margin-top: 8px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 13px;
+      transform: scale(0);
+      transition: transform 0.3s ease;
+    }
+
+    .feedback-message.show {
+      transform: scale(1);
+    }
+
+    .feedback-message.correct {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .feedback-message.incorrect {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .poem-line {
+      font-size: 16px;
+      color: #00ffff;
+      padding: 15px;
+      background: rgba(26, 35, 50, 0.9);
+      border-left: 4px solid #00ffff;
+      border-radius: 8px;
+      font-style: italic;
+      display: none;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    .poem-line.visible {
+      display: block;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav-buttons {
+      margin-top: 20px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .nav-button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #00a8ff 0%, #0080cc 100%);
+      color: white;
+      border: 2px solid rgba(0, 200, 255, 0.5);
+      border-radius: 12px;
+      cursor: pointer;
+      font-family: 'Zen Dots', cursive;
+      font-weight: bold;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 200, 255, 0.3);
+    }
+
+    .nav-button:hover {
+      background: linear-gradient(135deg, #00c8ff 0%, #00a0ee 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 200, 255, 0.5);
+    }
+
+    .nav-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .nav-button.back {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: 2px solid rgba(102, 126, 234, 0.5);
+    }
+
+    .nav-button.back:hover {
+      background: linear-gradient(135deg, #7c8ef0 0%, #8a5bb5 100%);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .completion-banner {
+      background: linear-gradient(135deg, #00a8ff 0%, #00ffff 100%);
+      color: #0a0e27;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin: 20px 0;
+      box-shadow: 0 8px 24px rgba(0, 200, 255, 0.4);
+      border: 2px solid rgba(0, 255, 255, 0.6);
+    }
+
+    .star-decoration {
+      display: inline-block;
+      font-size: 24px;
+      animation: twinkle 1.5s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #00a8ff;
+      padding-bottom: 15px;
+      text-shadow: 0 0 10px rgba(0, 200, 255, 0.5);
+    }
+
+    .page-number {
+      position: relative;
+      bottom: 10px;
+      left:10px;
+      font-size: 20px;
+      color: #00a8ff;
+      font-weight: bold;
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div class="scrapbook-container w-full h-full">
+   <div class="book-wrapper"><!-- Cover Page -->
+    <div class="page cover-page" data-page="-1"><!-- HUD Frame Borders -->
+     <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 5;"><!-- Top border -->
+      <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, #00ffff 20%, #00ffff 80%, transparent); box-shadow: 0 0 10px #00ffff;"></div><!-- Bottom border -->
+      <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, #00ffff 20%, #00ffff 80%, transparent); box-shadow: 0 0 10px #00ffff;"></div><!-- Left border -->
+      <div style="position: absolute; top: 0; left: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, transparent, #00ffff 20%, #00ffff 80%, transparent); box-shadow: 0 0 10px #00ffff;"></div><!-- Right border -->
+      <div style="position: absolute; top: 0; right: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, transparent, #00ffff 20%, #00ffff 80%, transparent); box-shadow: 0 0 10px #00ffff;"></div>
+
+      <!-- Scanning lines -->
+      <div style="position: absolute; top: 60px; left: 15px; right: 15px; height: 1px; background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3) 50%, transparent); animation: scanLine 3s linear infinite;"></div>
+      <div style="position: absolute; bottom: 60px; left: 15px; right: 15px; height: 1px; background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.3) 50%, transparent); animation: scanLine 4s linear infinite reverse;"></div>
+      <!-- Top right data readout -->
+      <div style="position: absolute; top: 15px; right: 60px; background: rgba(0, 20, 40, 0.8); border: 1px solid #00ffff; padding: 5px 12px; font-family: 'Audiowide', cursive; font-size: 10px; color: #00ffff; letter-spacing: 1px; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);">
+       SYSTEM: ONLINE
+      </div>
+      <div style="position: absolute; top: 15px; right: 230px; background: rgba(0, 20, 40, 0.8); border: 1px solid #00ffff; padding: 5px 12px; font-family: 'Audiowide', cursive; font-size: 10px; color: #00ffff; letter-spacing: 1px; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);">
+       MODE: SOLO
+      </div>
+      <!-- Top left coordinates -->
+      <div style="position: absolute; top: 15px; left: 60px; background: rgba(0, 20, 40, 0.8); border: 1px solid #00ffff; padding: 5px 12px; font-family: 'Audiowide', cursive; font-size: 10px; color: #00ffff; letter-spacing: 1px; box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);">
+       SECTOR: UNKNOWN
+      </div><!-- Bottom right timestamp -->
+      <div style="position: absolute; bottom: 15px; right: 200px; background: rgba(0, 20, 40, 0.8); border: 1px solid #8a2be2; padding: 5px 12px; font-family: 'Audiowide', cursive; font-size: 10px; color: #8a2be2; letter-spacing: 1px; box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);"><span id="timestamp">00:00:00</span>
+      </div>
+     </div>
+     <style>
+          @keyframes scanLine {
+            0% { transform: translateY(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(500px); opacity: 0; }
+          }
+        </style>
+     <svg width="100%" height="100%" viewbox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" style="position: absolute; top: 0; left: 0;"><!-- Deep space background --> <defs>
+       <radialgradient id="spaceGradient" cx="50%" cy="50%">
+        <stop offset="0%" style="stop-color:#1a0033;stop-opacity:1" />
+        <stop offset="50%" style="stop-color:#0d001a;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+       </radialgradient>
+       <radialgradient id="nebulaGlow1" cx="30%" cy="40%">
+        <stop offset="0%" style="stop-color:#4a0080;stop-opacity:0.8" />
+        <stop offset="50%" style="stop-color:#2d004d;stop-opacity:0.4" />
+        <stop offset="100%" style="stop-color:#000000;stop-opacity:0" />
+       </radialgradient>
+       <radialgradient id="nebulaGlow2" cx="70%" cy="60%">
+        <stop offset="0%" style="stop-color:#00394d;stop-opacity:0.8" />
+        <stop offset="50%" style="stop-color:#001a26;stop-opacity:0.4" />
+        <stop offset="100%" style="stop-color:#000000;stop-opacity:0" />
+       </radialgradient>
+      </defs> <!-- Background --> <rect width="800" height="600" fill="url(#spaceGradient)" /> <!-- Nebula clouds --> <ellipse cx="240" cy="200" rx="200" ry="150" fill="url(#nebulaGlow1)" /> <ellipse cx="560" cy="380" rx="180" ry="140" fill="url(#nebulaGlow2)" /> <!-- Stars --> <circle cx="150" cy="80" r="1.5" fill="#ffffff" opacity="0.9" /> <circle cx="320" cy="120" r="1" fill="#ffffff" opacity="0.7" /> <circle cx="580" cy="90" r="1.2" fill="#ffffff" opacity="0.8" /> <circle cx="720" cy="150" r="1" fill="#ffffff" opacity="0.6" /> <circle cx="100" cy="250" r="1.3" fill="#ffffff" opacity="0.8" /> <circle cx="650" cy="200" r="1" fill="#ffffff" opacity="0.7" /> <circle cx="200" cy="400" r="1.5" fill="#ffffff" opacity="0.9" /> <circle cx="450" cy="350" r="1" fill="#ffffff" opacity="0.6" /> <circle cx="600" cy="480" r="1.2" fill="#ffffff" opacity="0.8" /> <circle cx="750" cy="420" r="1" fill="#ffffff" opacity="0.7" /> <circle cx="90" cy="500" r="1.3" fill="#ffffff" opacity="0.8" /> <circle cx="380" cy="520" r="1" fill="#ffffff" opacity="0.6" /> <!-- Bright cyan stars --> <circle cx="420" cy="180" r="2" fill="#00ffff" opacity="0.9">
+       <animate attributename="opacity" values="0.9;0.4;0.9" dur="3s" repeatcount="indefinite" />
+      </circle> <circle cx="280" cy="450" r="1.5" fill="#00ffff" opacity="0.8">
+       <animate attributename="opacity" values="0.8;0.3;0.8" dur="4s" repeatcount="indefinite" />
+      </circle> <circle cx="680" cy="300" r="1.8" fill="#00ffff" opacity="0.9">
+       <animate attributename="opacity" values="0.9;0.5;0.9" dur="2.5s" repeatcount="indefinite" />
+      </circle> <!-- Origin System Map --> <g transform="translate(400, 280)"><!-- Sun at center -->
+       <circle cx="0" cy="0" r="20" fill="#ffaa00" opacity="0.8">
+        <animate attributename="opacity" values="0.8;1;0.8" dur="2s" repeatcount="indefinite" />
+       </circle>
+       <circle cx="0" cy="0" r="25" fill="#ffaa00" opacity="0.3">
+        <animate attributename="r" values="25;30;25" dur="2s" repeatcount="indefinite" />
+        <animate attributename="opacity" values="0.3;0.1;0.3" dur="2s" repeatcount="indefinite" />
+       </circle> <!-- Orbital paths -->
+       <circle cx="0" cy="0" r="60" fill="none" stroke="#00ffff" stroke-width="1" opacity="0.3" stroke-dasharray="5,5" />
+       <circle cx="0" cy="0" r="100" fill="none" stroke="#00ffff" stroke-width="1" opacity="0.3" stroke-dasharray="5,5" />
+       <circle cx="0" cy="0" r="140" fill="none" stroke="#00ffff" stroke-width="1" opacity="0.3" stroke-dasharray="5,5" />
+       <circle cx="0" cy="0" r="180" fill="none" stroke="#00ffff" stroke-width="1" opacity="0.3" stroke-dasharray="5,5" /> <!-- Planets --> 
+       <!-- Mercury -->
+       <circle cx="60" cy="0" r="5" fill="#8a8a8a" opacity="0.7">
+        <animatetransform attributename="transform" type="rotate" from="0 0 0" to="360 0 0" dur="8s" repeatcount="indefinite" />
+       </circle> <!-- Venus -->
+       <circle cx="0" cy="-100" r="7" fill="#ffd700" opacity="0.7">
+        <animatetransform attributename="transform" type="rotate" from="0 0 0" to="360 0 0" dur="12s" repeatcount="indefinite" />
+       </circle> <!-- Earth -->
+       <circle cx="-140" cy="0" r="8" fill="#4169e1" opacity="0.8">
+        <animatetransform attributename="transform" type="rotate" from="0 0 0" to="360 0 0" dur="16s" repeatcount="indefinite" />
+       </circle> <!-- Mars -->
+       <circle cx="0" cy="180" r="6" fill="#cd5c5c" opacity="0.7">
+        <animatetransform attributename="transform" type="rotate" from="0 0 0" to="360 0 0" dur="20s" repeatcount="indefinite" />
+       </circle> <!-- Pulsing scan effect -->
+       <circle cx="0" cy="0" r="50" fill="none" stroke="#00ffff" stroke-width="2" opacity="0.6">
+        <animate attributename="r" values="50;200;50" dur="4s" repeatcount="indefinite" />
+        <animate attributename="opacity" values="0.6;0;0.6" dur="4s" repeatcount="indefinite" />
+       </circle>
+      </g> <!-- Planet in background --> <circle cx="650" cy="120" r="60" fill="#1a2a4d" opacity="0.6" /> <ellipse cx="650" cy="120" rx="60" ry="8" fill="#0d1526" opacity="0.4" />
+     </svg><!-- HUD Dashboard -->
+     <div style="position: absolute; bottom: 20px; left: 20px; z-index: 10; background: rgba(0, 20, 40, 0.85); border: 2px solid #00ffff; border-radius: 8px; padding: 15px 20px; font-family: 'Audiowide', cursive; box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);">
+      <div style="color: #00ffff; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #00ffff; padding-bottom: 5px;">
+       ⚡ Tenno Status ⚡
+      </div><!-- Weapon Stat -->
+      <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 10px;"><span style="color: #00c8ff; font-size: 12px; min-width: 80px;">WEAPON:</span>
+       <div style="flex: 1; background: rgba(0, 200, 255, 0.2); height: 8px; border-radius: 4px; position: relative; overflow: hidden;">
+        <div style="position: absolute; left: 0; top: 0; height: 100%; width: 100%; background: linear-gradient(90deg, #00ffff 0%, #00c8ff 100%); box-shadow: 0 0 10px #00ffff;">
+         <div style="position: absolute; right: 0; top: 0; height: 100%; width: 30%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3)); animation: shimmer 2s ease-in-out infinite;"></div>
+        </div>
+       </div><span style="color: #ffffff; font-size: 11px; font-weight: bold;">WIT</span>
+      </div><!-- Energy Stat -->
+      <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 10px;"><span style="color: #00c8ff; font-size: 12px; min-width: 80px;">ENERGY:</span>
+       <div style="flex: 1; background: rgba(138, 43, 226, 0.2); height: 8px; border-radius: 4px; position: relative; overflow: hidden;">
+        <div style="position: absolute; left: 0; top: 0; height: 100%; width: 100%; background: linear-gradient(90deg, #8a2be2 0%, #9b4bd3 100%); box-shadow: 0 0 10px #8a2be2;">
+         <div style="position: absolute; right: 0; top: 0; height: 100%; width: 30%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3)); animation: shimmer 2s ease-in-out infinite 0.5s;"></div>
+        </div>
+       </div><span style="color: #ffffff; font-size: 11px; font-weight: bold;">MAX</span>
+      </div><!-- Patience Stat -->
+      <div style="display: flex; align-items: center; gap: 10px;"><span style="color: #00c8ff; font-size: 12px; min-width: 80px;">PATIENCE:</span>
+       <div style="flex: 1; background: rgba(15, 255, 80, 0.2); height: 8px; border-radius: 4px; position: relative; overflow: hidden;">
+        <div style="position: absolute; left: 0; top: 0; height: 100%; width: 0%; background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%); box-shadow: 0 0 10px #dc2626;"></div>
+       </div><span style="color: #ffffff; font-size: 11px; font-weight: bold;">ZERO</span>
+      </div>
+     </div><button class="cover-button" onclick="openScrapbook()" style="position: absolute; bottom: 30px; right: 30px; margin: 0; padding: 12px 24px; font-size: 16px; animation: none;"> Flip Open → </button>
+     <style>
+          @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(200%); }
+          }
+        </style>
+    </div><!-- Page 1 -->
+    <div class="page hidden-right" data-page="0">
+     <div class="page-header">
+      <h1 id="page-title" class="title-font text-5xl mb-2" style="color: #00ffff;">For My Favourite Content Creator</h1>
+      <p id="subtitle" class="text-lg" style="color: #00c8ff;">Solve the riddles to unveil the hidden verses</p>
+      <div class="mt-3 font-bold" style="color: #00a8ff;"><span class="progress-counter" data-page="0">0 / 4</span> lines revealed ✨
+      </div>
+     </div>
+     <main class="riddle-container" data-page="0"><!-- Riddles will be generated here -->
+     </main>
+     <div class="nav-buttons" style="display: none;" data-nav="0"><button class="nav-button" onclick="flipToNextPage(0)">Next Page →</button>
+     </div>
+     <div class="page-number">
+      Page 1 of 4
+     </div>
+    </div><!-- Page 2 -->
+    <div class="page hidden-right" data-page="1">
+     <div class="page-header">
+      <h2 class="title-font text-4xl mb-2" style="color: #00ffff;">Happy</h2>
+      <div class="mt-3 font-bold" style="color: #00a8ff;"><span class="progress-counter" data-page="1">0 / 4</span> lines revealed ✨
+      </div>
+     </div>
+     <main class="riddle-container" data-page="1"><!-- Riddles will be generated here -->
+     </main>
+     <div class="nav-buttons" style="display: none;" data-nav="1"><button class="nav-button back" onclick="flipToPreviousPage(1)">← Previous Page</button> <button class="nav-button" onclick="flipToNextPage(1)">Next Page →</button>
+     </div>
+     <div class="page-number">
+      Page 2 of 4
+     </div>
+    </div><!-- Page 3 -->
+    <div class="page hidden-right" data-page="2">
+     <div class="page-header">
+      <h2 class="title-font text-4xl mb-2" style="color: #00ffff;">Birthday</h2>
+      <div class="mt-3 font-bold" style="color: #00a8ff;"><span class="progress-counter" data-page="2">0 / 4</span> lines revealed ✨
+      </div>
+     </div>
+     <main class="riddle-container" data-page="2"><!-- Riddles will be generated here -->
+     </main>
+     <div class="nav-buttons" style="display: none;" data-nav="2"><button class="nav-button back" onclick="flipToPreviousPage(2)">← Previous Page</button> <button class="nav-button" onclick="flipToNextPage(2)">Next Page →</button>
+     </div>
+     <div class="page-number">
+      Page 3 of 4
+     </div>
+    </div><!-- Page 4 -->
+    <div class="page hidden-right" data-page="3">
+     <div class="page-header">
+      <h2 class="title-font text-4xl mb-2" style="color: #00ffff;">Dear Endy!</h2>
+      <div class="mt-3 font-bold" style="color: #00a8ff;"><span class="progress-counter" data-page="3">0 / 4</span> lines revealed ✨
+      </div>
+     </div>
+     <main class="riddle-container" data-page="3"><!-- Riddles will be generated here -->
+     </main>
+     <div class="completion-banner" style="display: none;" data-completion="3">
+      <div id="completion-message">
+       May you stay healthy, happy and high-spirited, always!
+      </div>
+      <div style="margin-top: 15px; font-size: 32px;"><span style="margin: 0 10px;">🎂</span> <span style="margin: 0 10px;">🎁</span>
+      </div>
+     </div>
+     <div class="nav-buttons" style="display: none;" data-nav="3"><button class="nav-button back" onclick="flipToPreviousPage(3)">← Previous Page</button> <button class="nav-button" onclick="readAgain()" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); border: 2px solid rgba(220, 38, 38, 0.5);">📜 Read Again</button>
+     </div>
+     <div class="page-number">
+      Page 4 of 4
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      page_title: "For My Favourite Content Creator",
+      subtitle: "Solve the riddles to unveil the hidden verses",
+      completion_message: "May you stay healthy, happy and high-spirited, always!",
+      background_color: "#1a2332",
+      cover_color: "#00a8ff",
+      text_color: "#00ffff",
+      accent_color: "#00a8ff",
+      border_color: "#00ffff",
+      font_family: "Space Mono",
+      font_size: 16
+    };
+
+    const poemData = [
+      // Page 1
+      [
+        {
+          line: "Amid abundant struggles of life and lost passions galore,",
+          riddle: "If you're new to a cool space ninja game, what is the first thing you find yourself doing?",
+          answer: ["swimming", "drowning", "sinking"]
+        },
+        {
+          line: "You skipped onto screens, armed with curiosity and love for lore.",
+          riddle: "When in doubt, open:",
+          answer: ["obsidian", "notes", "my notes", "the notes"]
+        },
+        {
+          line: "Your excitement has since echoed through streams and gameplay,",
+          riddle: "It's 'Sentient', not:",
+          answer: ["sentience"]
+        },
+        {
+          line: "Bringing exhilaration to your devoted Knights; night and day.",
+          riddle: "The resident glutton:",
+          answer: ["the helminth", "burly bob", "bob", "helminth"]
+        }
+      ],
+      // Page 2
+      [
+        {
+          line: "From exclamations at every unlocked cog in the wheel,",
+          riddle: "I love math, but you don't love my math as much as me. Who am I?",
+          answer: ["limbo"]
+        },
+        {
+          line: "To explicit admissions of how the game makes you feel;",
+          riddle: "Wolf-Dad liked to fiddle with this:",
+          answer: ["shawzin"]
+        },
+        {
+          line: "We've rediscovered forgotten favourites with your lead,",
+          riddle: "The flirty menace on mars:",
+          answer: ["varzia"]
+        },
+        {
+          line: "Thus your theories and thought-bubbles we fondly heed.",
+          riddle: "Our Baby Tenno's first onesie:",
+          answer: ["volt", "starter warframe", "starter frame"]
+        }
+      ],
+      // Page 3
+      [
+        {
+          line: "With baby-bottle in one hand and gripping games in the other,",
+          riddle: "The guy who needs blood pressure pills ASAP:",
+          answer: ["vay hek", "councilor vay hek"]
+        },
+        {
+          line: "A patron saint of gamer dads incarnate you are, my brother!",
+          riddle: "Pet-hater :(",
+          answer: ["ordis", "cephalon ordis"]
+        },
+        {
+          line: "With every chuckle and muffled cuss and polite NPC chatter,",
+          riddle: "You can use them for writing or to do the right thing:",
+          answer: ["the quills", "quills"]
+        },
+        {
+          line: "Your admirers' adoration grows at the way the little things matter.",
+          riddle: "The infection that can also birth a new life:",
+          answer: ["the helminth cyst", "helminth cyst", "cyst"]
+        }
+      ],
+      // Page 4
+      [
+        {
+          line: "I heard your date of manufacture being mentioned in passing,",
+          riddle: "When the game flipped you off, it gave you this:\n(hint: Orokin tech)",
+          answer: ["the reliquary drive", "reliquary drive"]
+        },
+        {
+          line: "And thought to add on to the goodwill you're no doubt deservedly amassing.",
+          riddle: "The tape recorder that spilt the tea:",
+          answer: ["a vitruvian", "vitruvian", "the vitruvian"]
+        },
+        {
+          line: "May your fervour and felicity forever shine as bright as your face mid-fluster,",
+          riddle: "The Space Aunty with a podcast",
+          answer: ["nora night", "nora"]
+        },
+        {
+          line: "And may you keep finding stories and worlds to love with all you can muster!",
+          riddle: "Your in-game namesake - and just as valuable!",
+          answer: ["endo"]
+        }
+      ]
+    ];
+
+    let pageProgress = [0, 0, 0, 0];
+    let currentPage = -1; // Start at cover page
+    let isFlipping = false;
+    let completedPages = [false, false, false, false];
+
+    function openScrapbook() {
+      if (isFlipping) return;
+      isFlipping = true;
+
+      const coverPage = document.querySelector('.page[data-page="-1"]');
+      const firstPage = document.querySelector('.page[data-page="0"]');
+
+      coverPage.classList.add('flipping-forward');
+      
+      setTimeout(() => {
+        coverPage.classList.remove('flipping-forward');
+        coverPage.classList.add('hidden-left');
+        firstPage.classList.remove('hidden-right');
+        currentPage = 0;
+        isFlipping = false;
+      }, 1000);
+    }
+
+    async function onConfigChange(config) {
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const backgroundColor = config.background_color || defaultConfig.background_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+
+      document.querySelector('.scrapbook-container').style.fontFamily = `${customFont}, cursive`;
+      document.querySelector('.scrapbook-container').style.fontSize = `${baseSize}px`;
+      
+      document.getElementById('page-title').textContent = config.page_title || defaultConfig.page_title;
+      document.getElementById('page-title').style.color = textColor;
+      
+      document.getElementById('subtitle').textContent = config.subtitle || defaultConfig.subtitle;
+      
+      document.getElementById('completion-message').textContent = config.completion_message || defaultConfig.completion_message;
+    }
+
+    function initializePoem() {
+      // Define unique emoji sets for each page to avoid similar emojis appearing together
+      const pageEmojiSets = [
+        ['🌍', '⭐', '🌙', '💫'], // Page 1: Earth, star, moon, sparkle
+        ['🌎', '🌟', '🌕', '✨'], // Page 2: Americas Earth, glowing star, full moon, sparkles
+        ['🌏', '☀️', '☁️', '⭐'], // Page 3: Asia Earth, sun, cloud, star
+        ['🌐', '💫', '🌓', '🌑']  // Page 4: Globe, dizzy, half moon, new moon
+      ];
+
+      poemData.forEach((pageData, pageIndex) => {
+        const container = document.querySelector(`.riddle-container[data-page="${pageIndex}"]`);
+        container.innerHTML = '';
+        
+        // Shuffle the emoji set for this page to randomize order
+        const pageEmojis = [...pageEmojiSets[pageIndex]];
+        for (let i = pageEmojis.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [pageEmojis[i], pageEmojis[j]] = [pageEmojis[j], pageEmojis[i]];
+        }
+
+        pageData.forEach((item, riddleIndex) => {
+          const cardDiv = document.createElement('div');
+          cardDiv.className = 'riddle-card';
+          const randomEmoji = pageEmojis[riddleIndex];
+          
+          cardDiv.innerHTML = `
+            <div class="mystery-box" data-page="${pageIndex}" data-riddle="${riddleIndex}">
+              <div style="font-size: 32px; margin-bottom: 5px;">${randomEmoji}</div>
+              <div>Click to reveal riddle</div>
+            </div>
+            <div class="riddle-content" style="display: none;" data-page="${pageIndex}" data-riddle="${riddleIndex}">
+              <div class="riddle-text">
+                <strong>🎯 Riddle:</strong> ${item.riddle}
+              </div>
+              <div class="answer-section">
+                <input 
+                  type="text" 
+                  placeholder="Type your answer here..." 
+                  class="answer-field"
+                  data-page="${pageIndex}"
+                  data-riddle="${riddleIndex}"
+                />
+                <button class="submit-btn" data-page="${pageIndex}" data-riddle="${riddleIndex}">Submit</button>
+              </div>
+              <div class="feedback-message" data-page="${pageIndex}" data-riddle="${riddleIndex}"></div>
+            </div>
+            <div class="poem-line" data-page="${pageIndex}" data-riddle="${riddleIndex}">
+              ${item.line}
+            </div>
+          `;
+          container.appendChild(cardDiv);
+        });
+      });
+
+      // Add click listeners
+      document.querySelectorAll('.mystery-box').forEach(box => {
+        box.addEventListener('click', function() {
+          const page = this.dataset.page;
+          const riddle = this.dataset.riddle;
+          const riddleContent = document.querySelector(`.riddle-content[data-page="${page}"][data-riddle="${riddle}"]`);
+          riddleContent.style.display = 'block';
+          this.style.display = 'none';
+          const input = document.querySelector(`.answer-field[data-page="${page}"][data-riddle="${riddle}"]`);
+          setTimeout(() => input.focus(), 100);
+        });
+      });
+
+      document.querySelectorAll('.submit-btn').forEach(btn => {
+        btn.addEventListener('click', handleAnswer);
+      });
+
+      document.querySelectorAll('.answer-field').forEach(input => {
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') {
+            const page = e.target.dataset.page;
+            const riddle = e.target.dataset.riddle;
+            handleAnswer({ target: document.querySelector(`.submit-btn[data-page="${page}"][data-riddle="${riddle}"]`) });
+          }
+        });
+      });
+    }
+
+    function handleAnswer(e) {
+      const pageIndex = parseInt(e.target.dataset.page);
+      const riddleIndex = parseInt(e.target.dataset.riddle);
+      const input = document.querySelector(`.answer-field[data-page="${pageIndex}"][data-riddle="${riddleIndex}"]`);
+      const userAnswer = input.value.trim().toLowerCase();
+      const correctAnswers = poemData[pageIndex][riddleIndex].answer;
+      const feedback = document.querySelector(`.feedback-message[data-page="${pageIndex}"][data-riddle="${riddleIndex}"]`);
+      const riddleContent = document.querySelector(`.riddle-content[data-page="${pageIndex}"][data-riddle="${riddleIndex}"]`);
+      const poemLine = document.querySelector(`.poem-line[data-page="${pageIndex}"][data-riddle="${riddleIndex}"]`);
+
+      // Check if answer matches any of the correct answers
+      const isCorrect = Array.isArray(correctAnswers) 
+        ? correctAnswers.some(ans => ans.toLowerCase() === userAnswer)
+        : correctAnswers.toLowerCase() === userAnswer;
+
+      if (isCorrect) {
+        feedback.textContent = '✓ Correct! Revealing...';
+        feedback.className = 'feedback-message correct show';
+        
+        setTimeout(() => {
+          riddleContent.style.display = 'none';
+          poemLine.classList.add('visible');
+          pageProgress[pageIndex]++;
+          updateProgress(pageIndex);
+          
+          if (pageProgress[pageIndex] === poemData[pageIndex].length) {
+            onPageComplete(pageIndex);
+          }
+        }, 1000);
+      } else {
+        feedback.textContent = '❌ Try again!';
+        feedback.className = 'feedback-message incorrect show';
+        
+        setTimeout(() => {
+          feedback.classList.remove('show');
+        }, 2000);
+      }
+    }
+
+    function updateProgress(pageIndex) {
+      const counter = document.querySelector(`.progress-counter[data-page="${pageIndex}"]`);
+      counter.textContent = `${pageProgress[pageIndex]} / ${poemData[pageIndex].length}`;
+    }
+
+    function onPageComplete(pageIndex) {
+      completedPages[pageIndex] = true;
+      const navButtons = document.querySelector(`[data-nav="${pageIndex}"]`);
+      navButtons.style.display = 'flex';
+
+      if (pageIndex === 3) {
+        const completionBanner = document.querySelector(`[data-completion="3"]`);
+        completionBanner.style.display = 'block';
+      }
+    }
+
+    function flipToNextPage(fromPage) {
+      if (isFlipping) return;
+      isFlipping = true;
+
+      const currentPageEl = document.querySelector(`.page[data-page="${fromPage}"]`);
+      const nextPageEl = document.querySelector(`.page[data-page="${fromPage + 1}"]`);
+
+      currentPageEl.classList.add('flipping-forward');
+      
+      setTimeout(() => {
+        currentPageEl.classList.remove('flipping-forward');
+        currentPageEl.classList.add('hidden-left');
+        nextPageEl.classList.remove('hidden-right');
+        currentPage = fromPage + 1;
+        isFlipping = false;
+      }, 1000);
+    }
+
+    function flipToPreviousPage(fromPage) {
+      if (isFlipping) return;
+      isFlipping = true;
+
+      const currentPageEl = document.querySelector(`.page[data-page="${fromPage}"]`);
+      const prevPageEl = document.querySelector(`.page[data-page="${fromPage - 1}"]`);
+
+      prevPageEl.classList.remove('hidden-left');
+      prevPageEl.classList.add('flipping-back');
+      
+      setTimeout(() => {
+        prevPageEl.classList.remove('flipping-back');
+        currentPageEl.classList.add('hidden-right');
+        currentPage = fromPage - 1;
+        isFlipping = false;
+      }, 1000);
+    }
+
+    function readAgain() {
+      // Reset to show all pages in completed state
+      document.querySelectorAll('.page').forEach((page, index) => {
+        const pageNum = parseInt(page.dataset.page);
+        
+        // Skip cover page in reset
+        if (pageNum === -1) {
+          page.classList.remove('hidden-left', 'hidden-right');
+          return;
+        }
+        
+        if (pageNum === 0) {
+          page.classList.remove('hidden-left');
+          page.classList.add('hidden-right');
+        } else {
+          page.classList.remove('hidden-left');
+          page.classList.add('hidden-right');
+        }
+
+        // Show all poem lines
+        page.querySelectorAll('.poem-line').forEach(line => {
+          line.classList.add('visible');
+          line.style.display = 'block';
+        });
+
+        // Hide all riddle boxes and contents
+        page.querySelectorAll('.mystery-box, .riddle-content').forEach(el => {
+          el.style.display = 'none';
+        });
+
+        // Show navigation buttons
+        const navButtons = page.querySelector('[data-nav]');
+        if (navButtons) {
+          navButtons.style.display = 'flex';
+        }
+
+        // Update progress counters
+        const counter = page.querySelector('.progress-counter');
+        if (counter && pageNum >= 0) {
+          counter.textContent = `${poemData[pageNum].length} / ${poemData[pageNum].length}`;
+        }
+      });
+
+      currentPage = -1;
+    }
+
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.cover_color || defaultConfig.cover_color,
+              set: (value) => {
+                config.cover_color = value;
+                window.elementSdk.setConfig({ cover_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.accent_color || defaultConfig.accent_color,
+              set: (value) => {
+                config.accent_color = value;
+                window.elementSdk.setConfig({ accent_color: value });
+              }
+            },
+            {
+              get: () => config.border_color || defaultConfig.border_color,
+              set: (value) => {
+                config.border_color = value;
+                window.elementSdk.setConfig({ border_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["page_title", config.page_title || defaultConfig.page_title],
+          ["subtitle", config.subtitle || defaultConfig.subtitle],
+          ["completion_message", config.completion_message || defaultConfig.completion_message]
+        ])
+      });
+    }
+
+    // Initialize the poem on page load
+    initializePoem();
+    
+    // Animate timestamp on cover page
+    function updateTimestamp() {
+      const timestampEl = document.getElementById('timestamp');
+      if (timestampEl) {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        timestampEl.textContent = `${hours}:${minutes}:${seconds}`;
+      }
+    }
+    
+    // Update timestamp every second
+    setInterval(updateTimestamp, 1000);
+    updateTimestamp();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9be5e762a5908ad3',t:'MTc2ODQ4NTY3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
